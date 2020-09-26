@@ -2,7 +2,7 @@ import Chart from 'chart.js';
 
 var helpers = Chart.helpers;
 
-var formatter = function(value) {
+var formatter = function (value) {
 	if (helpers.isNullOrUndef(value)) {
 		return null;
 	}
@@ -36,6 +36,8 @@ export default {
 	anchor: 'center',
 	backgroundColor: null,
 	borderColor: null,
+	shadowBlur: null,
+	shadowColor: null,
 	borderRadius: 0,
 	borderWidth: 0,
 	clamp: false,
@@ -47,7 +49,7 @@ export default {
 		lineHeight: 1.2,
 		size: undefined,
 		style: undefined,
-		weight: null
+		weight: null,
 	},
 	formatter: formatter,
 	labels: undefined,
@@ -58,12 +60,12 @@ export default {
 		top: 4,
 		right: 4,
 		bottom: 4,
-		left: 4
+		left: 4,
 	},
 	rotation: 0,
 	textAlign: 'start',
 	textStrokeColor: undefined,
 	textStrokeWidth: 0,
 	textShadowBlur: 0,
-	textShadowColor: undefined
+	textShadowColor: undefined,
 };

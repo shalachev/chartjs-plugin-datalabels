@@ -18,14 +18,14 @@ function boundingRects(model) {
 			x: tx - padding.left - borderWidth,
 			y: ty - padding.top - borderWidth,
 			w: tw + padding.width + borderWidth * 2,
-			h: th + padding.height + borderWidth * 2
+			h: th + padding.height + borderWidth * 2,
 		},
 		text: {
 			x: tx,
 			y: ty,
 			w: tw,
-			h: th
-		}
+			h: th,
+		},
 	};
 }
 
@@ -38,13 +38,13 @@ function getScaleOrigin(el) {
 	}
 
 	if (scale.xCenter !== undefined && scale.yCenter !== undefined) {
-		return {x: scale.xCenter, y: scale.yCenter};
+		return { x: scale.xCenter, y: scale.yCenter };
 	}
 
 	var pixel = scale.getBasePixel();
 	return horizontal ?
-		{x: pixel, y: null} :
-		{x: null, y: pixel};
+		{ x: pixel, y: null } :
+		{ x: null, y: pixel };
 }
 
 function getPositioner(el) {
@@ -64,6 +64,8 @@ function drawFrame(ctx, rect, model) {
 	var bgColor = model.backgroundColor;
 	var borderColor = model.borderColor;
 	var borderWidth = model.borderWidth;
+	var shadowBlur = model.shadowBlur;
+	var shadowColor = model.shadowColor;
 
 	if (!bgColor && (!borderColor || !borderWidth)) {
 		return;
@@ -81,6 +83,14 @@ function drawFrame(ctx, rect, model) {
 
 	ctx.closePath();
 
+	if (shadowBlur) {
+		ctx.shadowBlur = model.shadowBlur;
+	}
+
+	if (shadowColor) {
+		ctx.shadowColor = model.shadowColor;
+	}
+
 	if (bgColor) {
 		ctx.fillStyle = bgColor;
 		ctx.fill();
@@ -92,6 +102,8 @@ function drawFrame(ctx, rect, model) {
 		ctx.lineJoin = 'miter';
 		ctx.stroke();
 	}
+
+	// console.log(ctx);
 }
 
 function textGeometry(rect, align, font) {
@@ -110,7 +122,7 @@ function textGeometry(rect, align, font) {
 		h: h,
 		w: w,
 		x: x,
-		y: y
+		y: y,
 	};
 }
 
@@ -179,12 +191,12 @@ function drawText(ctx, lines, rect, model) {
 			filled: filled,
 			w: rect.w,
 			x: rect.x,
-			y: rect.y + rect.h * i
+			y: rect.y + rect.h * i,
 		});
 	}
 }
 
-var Label = function(config, ctx, el, index) {
+var Label = function (config, ctx, el, index) {
 	var me = this;
 
 	me._config = config;
@@ -199,12 +211,14 @@ helpers.extend(Label.prototype, {
 	/**
 	 * @private
 	 */
-	_modelize: function(display, lines, config, context) {
+	_modelize: function (display, lines, config, context) {
 		var me = this;
 		var index = me._index;
 		var resolve = helpers.options.resolve;
 		var font = utils.parseFont(resolve([config.font, {}], context, index));
 		var color = resolve([config.color, Chart.defaults.global.defaultFontColor], context, index);
+
+		console.log(config);
 
 		return {
 			align: resolve([config.align, 'center'], context, index),
@@ -212,6 +226,11 @@ helpers.extend(Label.prototype, {
 			area: context.chart.chartArea,
 			backgroundColor: resolve([config.backgroundColor, null], context, index),
 			borderColor: resolve([config.borderColor, null], context, index),
+
+			shadowBlur: resolve([config.shadowBlur, 0], context, index),
+			shadowColor: resolve([config.shadowColor, 0], context, index),
+
+			shadowBlurColor: resolve([config.shadowBlur, 0], context, index),
 			borderRadius: resolve([config.borderRadius, 0], context, index),
 			borderWidth: resolve([config.borderWidth, 0], context, index),
 			clamp: resolve([config.clamp, false], context, index),
@@ -231,11 +250,11 @@ helpers.extend(Label.prototype, {
 			textShadowBlur: resolve([config.textShadowBlur, 0], context, index),
 			textShadowColor: resolve([config.textShadowColor, color], context, index),
 			textStrokeColor: resolve([config.textStrokeColor, color], context, index),
-			textStrokeWidth: resolve([config.textStrokeWidth, 0], context, index)
+			textStrokeWidth: resolve([config.textStrokeWidth, 0], context, index),
 		};
 	},
 
-	update: function(context) {
+	update: function (context) {
 		var me = this;
 		var model = null;
 		var rects = null;
@@ -262,23 +281,23 @@ helpers.extend(Label.prototype, {
 		me._rects = rects;
 	},
 
-	geometry: function() {
+	geometry: function () {
 		return this._rects ? this._rects.frame : {};
 	},
 
-	rotation: function() {
+	rotation: function () {
 		return this._model ? this._model.rotation : 0;
 	},
 
-	visible: function() {
+	visible: function () {
 		return this._model && this._model.opacity;
 	},
 
-	model: function() {
+	model: function () {
 		return this._model;
 	},
 
-	draw: function(chart, center) {
+	draw: function (chart, center) {
 		var me = this;
 		var ctx = chart.ctx;
 		var model = me._model;
@@ -310,7 +329,7 @@ helpers.extend(Label.prototype, {
 		drawText(ctx, model.lines, rects.text, model);
 
 		ctx.restore();
-	}
+	},
 });
 
 export default Label;

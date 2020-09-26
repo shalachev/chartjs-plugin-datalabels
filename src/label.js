@@ -102,8 +102,6 @@ function drawFrame(ctx, rect, model) {
 		ctx.lineJoin = 'miter';
 		ctx.stroke();
 	}
-
-	// console.log(ctx);
 }
 
 function textGeometry(rect, align, font) {
@@ -218,18 +216,14 @@ helpers.extend(Label.prototype, {
 		var font = utils.parseFont(resolve([config.font, {}], context, index));
 		var color = resolve([config.color, Chart.defaults.global.defaultFontColor], context, index);
 
-		console.log(config);
-
 		return {
 			align: resolve([config.align, 'center'], context, index),
 			anchor: resolve([config.anchor, 'center'], context, index),
 			area: context.chart.chartArea,
 			backgroundColor: resolve([config.backgroundColor, null], context, index),
 			borderColor: resolve([config.borderColor, null], context, index),
-
 			shadowBlur: resolve([config.shadowBlur, 0], context, index),
 			shadowColor: resolve([config.shadowColor, 0], context, index),
-
 			shadowBlurColor: resolve([config.shadowBlur, 0], context, index),
 			borderRadius: resolve([config.borderRadius, 0], context, index),
 			borderWidth: resolve([config.borderWidth, 0], context, index),
